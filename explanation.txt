@@ -1,0 +1,11 @@
+FL (FL1 - FL4): Likely Financial Literacy. These questions test the owner's understanding of financial concepts. Notice how the median score for FL3 is very high (4 or 5) across most sectors.
+
+FR (FR1 - FR4): Likely Financial Reporting or Financial Risk.
+
+RA (RA1 - RA4): As we guessed, Risk Attitude. Interestingly, the median score across almost all sectors here is exactly a 2 or 3, meaning most of these SMEs are relatively risk-averse.
+
+MDA (MDA1 - MDA4): Managerial Decision Analysis. How they use data/information to make business choices.
+
+FDM (FDM1 - FDM4): Financial Decision Making. The actual financial choices they execute.
+
+FA (FA1 - FA4): Financial Awareness
