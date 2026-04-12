@@ -1,1 +1,50 @@
+# ── Secrets ──────────────────────────────────────────────────────────
 .env
+.env.*
+!.env.example
+
+# ── Python ───────────────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.egg-info/
+dist/
+build/
+*.egg
+.eggs/
+*.whl
+.venv/
+venv/
+env/
+ENV/
+
+# ── Pytest / Testing ─────────────────────────────────────────────────
+.pytest_cache/
+.coverage
+htmlcov/
+*.log
+
+# ── Gradio ───────────────────────────────────────────────────────────
+.gradio/
+gradio_cached_examples/
+flagged/
+
+# ── Node / Frontend ──────────────────────────────────────────────────
+frontend/node_modules/
+frontend/dist/
+frontend/.vite/
+frontend/.env
+node_modules/
+dist/
+
+# ── OS ───────────────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# ── Editor ───────────────────────────────────────────────────────────
+.vscode/
+.idea/
+*.swp
+*.swo

@@ -1,0 +1,10 @@
+fastapi
+uvicorn
+groq
+tavily-python
+pandas
+numpy
+gradio
+gradio_client
+python-dotenv
+pydantic
