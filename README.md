@@ -60,51 +60,30 @@ graph TD
 ## Data Normalization & Type Safety
 To ensure resilience across multiple turns, the system intercepts all LLM output and enforces strict dictionary and list normalization before sending changes back to the Gradio UI State. By blocking raw Pydantic serialization of potentially contaminated memory buffers, the system avoids crashing during long dialogues.
 
-## What Was Modified & Added
-
-This diagram captures all the changes made on top of the original codebase during the hackathon session.
+## Full System — Frontend to Services
 
 ```mermaid
 graph TD
-    %% Original baseline
-    Original["Original Codebase\n(Single-agent chat)"]
+    User((User)) --> FE["React Frontend\nfrontend/ · Vite + React 18\nlocalhost:3000"]
 
-    %% Backend Refactor
-    Original --> MA["Multi-Agent Refactor\nsales_agent.py"]
-    MA --> A1["Analyzer Agent\nllama-3.1-8b-instant\nGates irrelevant input"]
-    MA --> A2["Validator Agent\nllama-3.1-8b-instant\nStructures intent as JSON"]
-    MA --> A3["Sales Agent\nllama-3.3-70b-versatile\nGenerates expert response"]
+    FE -->|"Open SalesGenius\nlocalhost:7860"| SG["SalesGenius\napp_gui.py · Gradio"]
+    FE -->|"Open PlotSense\nlocalhost:7861"| SD["Smart Dashboard\nsmart_dashboard.py · Gradio"]
 
-    A1 -->|"Feedforward: Approved Intent"| A2
-    A2 -->|"Validated Sales Context"| A3
+    %% SalesGenius (high level only)
+    subgraph SalesGenius Pipeline
+        SG --> SGP["3-Agent Chain\nAnalyzer → Validator → Sales Agent\nGroq LLMs + Tavily + Financial DNA CSV"]
+    end
 
-    %% JSON extraction
-    MA --> JE["Robust JSON Extraction\nextract_json_block\nRegex-based, handles any LLM format"]
-    MA --> TS["Type Safety Layer\nCoerces str to list for pain_points/goals\nCoerces str to float for budget/revenue"]
-    MA --> TR["Trace Dict Added to AgentResponse\nanalyzer + validator outputs captured"]
+    %% Smart Dashboard / PlotSense detail
+    subgraph PlotSense Pipeline
+        SD -->|"User uploads CSV"| CSV["pd.read_csv\nDataFrame loaded into memory"]
 
-    %% Gradio UI Upgrade
-    Original --> GUI["Gradio UI Upgrade\napp_gui.py"]
-    GUI --> G1["Gradio 6.0 Compatibility\nRemoved type=messages\nMoved theme to launch"]
-    GUI --> G2["Dict-based History Normalization\nHandles ChatMessage objects\nPrevents second-turn crashes"]
-    GUI --> G3["Intelligence Trace Panel\nCollapsible accordion\nShows Analyzer + Validator reasoning"]
-    GUI --> G4["Safe Profile Serialization\nManual field extraction\nNo Pydantic model_dump crashes"]
+        CSV -->|"df passed in"| REC["ps.recommender\ndf, n=5\nSends DataFrame to Groq LLM\nReturns top 5 chart type suggestions\nas a ranked DataFrame"]
 
-    %% New Files
-    Original --> NF["New Files Created"]
-    NF --> NF1["smart_dashboard.py\nPlotSense Gradio dashboard\nCSV upload + AI chart generation"]
-    NF --> NF2["final_api.py\nGradio client integration\nConnects to both services"]
-    NF --> NF3["requirements.txt\nAll Python dependencies listed"]
-    NF --> NF4["architecture.md\nSystem architecture docs"]
-    NF --> NF5[".gitignore\nCovers Python, Node, Gradio, secrets"]
+        REC -->|"recommendations.iloc 0\nbest chart row"| GEN["ps.plotgen\ndf + best recommendation\nGenerates matplotlib Figure\nbased on suggested chart type\nand best columns to use"]
 
-    %% Frontend
-    Original --> FE["React Frontend\nfrontend/ - Vite + React 18"]
-    FE --> FE1["config.js\nSalesGenius: 127.0.0.1:7860\nPlotSense: 127.0.0.1:7861"]
-    FE --> FE2["Launcher Dashboard\nTwo service cards\nDirect links to Gradio apps"]
-    FE --> FE3["HeroSection\nStats, CTA buttons"]
-    FE --> FE4["Dark-mode Design System\nindex.css with CSS variables"]
-    FE --> FE5["API Wrappers\nsalesGenius.js + plotSense.js"]
+        GEN -->|"matplotlib Figure"| EXP["ps.explainer\nfig\nSends chart to Groq LLM\nReturns plain-language explanation\nof what the chart shows"]
+
+        EXP --> OUT["Gradio UI Outputs\n- Dataset info text\n- Chart recommendations text\n- Rendered plot\n- AI Insights explanation"]
+    end
 ```
-
-
