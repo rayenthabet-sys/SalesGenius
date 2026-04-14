@@ -18,7 +18,7 @@ build/
 venv/
 env/
 ENV/
-
+ 
 # ── Pytest / Testing ─────────────────────────────────────────────────
 .pytest_cache/
 .coverage
